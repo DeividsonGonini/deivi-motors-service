@@ -1,0 +1,35 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /deivi_motors
+
+spring:
+  output:
+    ansi:
+      enabled: always
+
+  application:
+    name: Deivi Motors
+
+  main:
+    allow-bean-definition-overriding: true
+
+  data:
+    mongodb:
+      uri: mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@fiap.jlvopvm.mongodb.net/deivimotorsDB?retryWrites=true&w=majority
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui

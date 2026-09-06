@@ -1,0 +1,39 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /deivi_motors
+
+spring:
+  application:
+    name: Deivi Motors
+
+  output:
+    ansi:
+      enabled: always
+
+  main:
+    allow-bean-definition-overriding: true
+
+  data:
+    mongodb:
+      uri: ${MONGODB_URL:mongodb://admin:admin@localhost:27017/deivimotorsDB?authSource=admin}
+
+  sql:
+    init:
+      mode: always
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui

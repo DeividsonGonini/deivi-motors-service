@@ -1,0 +1,32 @@
+services:
+  deivi-motors-service:
+    build:
+      context: ./deivimotors-service
+      dockerfile: Dockerfile
+    container_name: deivimotors-service
+    ports:
+      - "8082:8082"
+    environment:
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_REGION: us-east-1
+      MONGODB_URL: mongodb://admin:admin@mongodb:27017/deivimotorsDB?authSource=admin
+      SPRING_PROFILES_ACTIVE: local
+    depends_on:
+      - mongodb
+
+
+  mongodb:
+    image: mongo:6
+    container_name: deivi-motors-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_DATABASE: deivimotorsDB
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
