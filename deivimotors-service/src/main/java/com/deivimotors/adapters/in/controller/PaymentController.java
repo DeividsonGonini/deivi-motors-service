@@ -117,7 +117,7 @@ public class PaymentController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> checkout(
             @PathVariable UUID saleId,
-            @Valid @RequestBody(required = true)  PaymentRequest request
+            @Valid @RequestBody  PaymentRequest request
     ) throws PaymentException {
         service.checkout(saleId, request.status());
         return ResponseEntity.noContent().build();

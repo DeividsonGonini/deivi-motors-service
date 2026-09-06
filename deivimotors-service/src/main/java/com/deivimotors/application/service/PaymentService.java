@@ -4,9 +4,11 @@ import com.deivimotors.application.exceptions.PaymentException;
 import com.deivimotors.application.exceptions.PaymentNotFoundException;
 import com.deivimotors.application.exceptions.PaymentUnprocessableEntityException;
 import com.deivimotors.application.ports.in.PaymentServiceInputPort;
+import com.deivimotors.application.ports.in.SaleServiceInputPort;
 import com.deivimotors.application.ports.out.PaymentRepositoryOutputPort;
 import com.deivimotors.domain.Payment;
 import com.deivimotors.domain.enums.PaymentStatusEnum;
+import com.deivimotors.domain.enums.SaleStatusEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,9 +19,12 @@ public class PaymentService implements PaymentServiceInputPort {
     private static final Logger logger = LoggerFactory.getLogger(PaymentService.class);
 
     private final PaymentRepositoryOutputPort repository;
+    private final SaleServiceInputPort saleService;
 
-    public PaymentService(PaymentRepositoryOutputPort repository) {
+    public PaymentService(PaymentRepositoryOutputPort repository,
+                          SaleServiceInputPort saleService) {
         this.repository = repository;
+        this.saleService = saleService;
     }
 
     @Override
@@ -31,6 +36,7 @@ public class PaymentService implements PaymentServiceInputPort {
             return payment.get();
         }
 
+        //TODO Ajustar geração ID do pagamento
         var newPayment = new Payment(saleId);
         String idPayment = repository.save(newPayment);
 
@@ -71,10 +77,14 @@ public class PaymentService implements PaymentServiceInputPort {
             case PAGAMENTO_APROVADO -> {
                 Payment paymentUpdated = payment.approve();
                 repository.save(paymentUpdated);
+                saleService.updateStatus(saleId, SaleStatusEnum.CONCLUIDO);
+                logger.info("Payment approve, sale status {}", SaleStatusEnum.CONCLUIDO.getStatus() );
             }
             case PAGAMENTO_RECUSADO -> {
                 var paymentUpdated = payment.reject();
                 repository.save(paymentUpdated);
+                saleService.updateStatus(saleId, SaleStatusEnum.CANCELADO);
+                logger.info("Payment reject, sale status {}", SaleStatusEnum.CANCELADO.getStatus() );
             }
             default -> throw new PaymentUnprocessableEntityException(
                     "The current sale status: " + payment.getStatus() + " does not allow checkout");

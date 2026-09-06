@@ -1,16 +1,20 @@
 package com.deivimotors.application.service;
 
+import com.deivimotors.application.exceptions.PaymentUnprocessableEntityException;
 import com.deivimotors.application.exceptions.VehicleNotFoundException;
 import com.deivimotors.application.ports.out.VehicleRepositoryOutputPort;
 import com.deivimotors.domain.Vehicle;
 import com.deivimotors.application.ports.in.VehicleServiceInputPort;
 import com.deivimotors.domain.enums.VehicleStatusEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public class VehicleService implements VehicleServiceInputPort {
+    private static final Logger logger = LoggerFactory.getLogger(VehicleService.class);
     private VehicleRepositoryOutputPort repository;
 
     public VehicleService(VehicleRepositoryOutputPort repository) {
@@ -50,6 +54,14 @@ public class VehicleService implements VehicleServiceInputPort {
     @Override
     public List<Vehicle> findBySituacaoOrderByPrecoAsc(VehicleStatusEnum status) {
         return repository.findBySituacaoOrderByPrecoAsc(status);
+    }
+
+    @Override
+    public void validationVehicleForSale(VehicleStatusEnum status) {
+        if(!status.equals(VehicleStatusEnum.A_VENDA)){
+            throw new PaymentUnprocessableEntityException("vehicle sold");
+        }
+        logger.info("Vehicle available for sale");
     }
 
     private Vehicle findById(String vehicleId) throws VehicleNotFoundException {

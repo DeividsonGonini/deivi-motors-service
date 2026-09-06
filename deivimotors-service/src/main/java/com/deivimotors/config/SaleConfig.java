@@ -1,5 +1,6 @@
 package com.deivimotors.config;
 
+import com.deivimotors.application.ports.in.PaymentServiceInputPort;
 import com.deivimotors.application.ports.in.VehicleServiceInputPort;
 import com.deivimotors.application.ports.out.SaleRepositoryOutputPort;
 import com.deivimotors.application.service.SaleService;

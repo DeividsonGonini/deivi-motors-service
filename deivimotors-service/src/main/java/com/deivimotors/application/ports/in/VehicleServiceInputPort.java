@@ -14,4 +14,6 @@ public interface VehicleServiceInputPort {
     Vehicle update(String vehicleId, Vehicle vehicle) throws VehicleNotFoundException;
 
     List<Vehicle> findBySituacaoOrderByPrecoAsc(VehicleStatusEnum status);
+
+    void validationVehicleForSale(VehicleStatusEnum status);
 }
