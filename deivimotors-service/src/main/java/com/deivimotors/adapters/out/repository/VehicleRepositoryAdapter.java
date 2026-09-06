@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class VehicleRepositoryAdapter implements VehicleRepositoryOutputPort {
     private final VehicleEntityMapper mapper;
 
     @Override
-    public String save(Vehicle vehicle) {
+    public UUID save(Vehicle vehicle) {
         VehicleEntity vehicleEntity = mapper.toVehicleEntity(vehicle);
         VehicleEntity vehicleSave = mongoRepository.save(vehicleEntity);
 
@@ -28,7 +29,7 @@ public class VehicleRepositoryAdapter implements VehicleRepositoryOutputPort {
     }
 
     @Override
-    public Optional<Vehicle> findById(String idVehicle) {
+    public Optional<Vehicle> findById(UUID idVehicle) {
         return mongoRepository.findById(idVehicle)
                 .map(mapper::toVehicle);
     }

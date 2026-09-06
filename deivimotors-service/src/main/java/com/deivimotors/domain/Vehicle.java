@@ -3,10 +3,11 @@ package com.deivimotors.domain;
 import com.deivimotors.domain.enums.VehicleStatusEnum;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class Vehicle {
 
-    private String id;
+    private UUID id;
     private String marca;
     private String modelo;
     private Integer ano;
@@ -14,7 +15,7 @@ public class Vehicle {
     private BigDecimal preco;
     private VehicleStatusEnum situacao;
 
-    public Vehicle(String id,
+    public Vehicle(UUID id,
                    String marca,
                    String modelo,
                    Integer ano,
@@ -32,7 +33,7 @@ public class Vehicle {
         this.situacao = situacao;
     }
 
-    public static Vehicle fromId(String id) {
+    public static Vehicle fromId(UUID id) {
         return new Vehicle(
                 id,
                 null,
@@ -44,11 +45,11 @@ public class Vehicle {
         );
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

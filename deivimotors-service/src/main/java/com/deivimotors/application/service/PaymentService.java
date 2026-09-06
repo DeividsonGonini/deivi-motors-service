@@ -37,15 +37,21 @@ public class PaymentService implements PaymentServiceInputPort {
         }
 
         //TODO Ajustar geração ID do pagamento
-        var newPayment = new Payment(saleId);
-        String idPayment = repository.save(newPayment);
+        UUID paymentId = UUID.randomUUID();
+        var paymentNew = new Payment(paymentId, saleId);
 
-        logger.info("Payment created for sale: " + newPayment.getSaleId());
+//        paymentNew.setId(paymentId);
+//        paymentNew.setSaleId(saleId);
+//        paymentNew.setStatus(PaymentStatusEnum.AGUARDANDO_PAGAMENTO);
+
+        UUID idPayment = repository.save(paymentNew);
+
+        logger.info("Payment created for sale: " + paymentNew.getSaleId());
 
         return new Payment(
                 idPayment,
-                newPayment.getSaleId(),
-                newPayment.getStatus()
+                paymentNew.getSaleId(),
+                paymentNew.getStatus()
         )
                 ;
     }

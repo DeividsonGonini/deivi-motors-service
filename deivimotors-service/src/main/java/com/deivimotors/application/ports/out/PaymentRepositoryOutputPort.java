@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface PaymentRepositoryOutputPort {
 
-    String save(Payment payment) throws PaymentNotFoundException;
+    UUID save(Payment payment) throws PaymentNotFoundException;
 
     Optional<Payment> getBySaleId(UUID saleId) throws PaymentNotFoundException;
 

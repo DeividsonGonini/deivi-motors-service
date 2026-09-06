@@ -22,18 +22,18 @@ public class VehicleService implements VehicleServiceInputPort {
     }
 
     @Override
-    public String create(Vehicle vehicle) {
+    public UUID create(Vehicle vehicle) {
 
-        String id = UUID.randomUUID().toString();
+        UUID id = UUID.randomUUID();
         vehicle.setId(id);
         vehicle.setSituacao(VehicleStatusEnum.A_VENDA);
 
-        String idVehicle = repository.save(vehicle);
+        UUID idVehicle = repository.save(vehicle);
         return idVehicle;
     }
 
     @Override
-    public Vehicle getById(String vehicleId) throws VehicleNotFoundException {
+    public Vehicle getById(UUID vehicleId) throws VehicleNotFoundException {
         Optional<Vehicle> vehicle = Optional.ofNullable(repository.findById(vehicleId)
                 .orElseThrow(() -> new VehicleNotFoundException("Vehicle not found for id: " + vehicleId)));
 
@@ -41,7 +41,7 @@ public class VehicleService implements VehicleServiceInputPort {
     }
 
     @Override
-    public Vehicle update(String vehicleId, Vehicle vehicle) throws VehicleNotFoundException{
+    public Vehicle update(UUID vehicleId, Vehicle vehicle) throws VehicleNotFoundException{
         Vehicle currentVehicle = findById(vehicleId);
 
         Vehicle updateVehicle = updateFrom(currentVehicle, vehicle);
@@ -64,7 +64,7 @@ public class VehicleService implements VehicleServiceInputPort {
         logger.info("Vehicle available for sale");
     }
 
-    private Vehicle findById(String vehicleId) throws VehicleNotFoundException {
+    private Vehicle findById(UUID vehicleId) throws VehicleNotFoundException {
         Optional<Vehicle> vehicle = Optional.ofNullable(repository.findById(vehicleId)
                 .orElseThrow(() -> new VehicleNotFoundException("Vehicle not found for id: : " + vehicleId)));
         return vehicle.get();

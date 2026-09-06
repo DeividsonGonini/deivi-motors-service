@@ -6,11 +6,12 @@ import com.deivimotors.domain.enums.VehicleStatusEnum;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface VehicleRepositoryOutputPort {
-    String save(Vehicle vehicle);
+    UUID save(Vehicle vehicle);
 
-    Optional<Vehicle> findById(String idVehicle) throws VehicleNotFoundException;
+    Optional<Vehicle> findById(UUID idVehicle) throws VehicleNotFoundException;
 
     Vehicle update(Vehicle vehicle);
 

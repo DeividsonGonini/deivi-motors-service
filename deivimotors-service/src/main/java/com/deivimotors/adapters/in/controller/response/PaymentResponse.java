@@ -5,7 +5,7 @@ import com.deivimotors.domain.enums.PaymentStatusEnum;
 import java.util.UUID;
 
 public record PaymentResponse(
-        String id,
+        UUID id,
         UUID saleId,
         PaymentStatusEnum status
 ) {
