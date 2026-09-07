@@ -41,9 +41,9 @@ public class VehicleRepositoryAdapter implements VehicleRepositoryOutputPort {
         return mapper.toVehicle(savedVehicle);
     }
 
-    public List<Vehicle> findBySituacaoOrderByPrecoAsc(VehicleStatusEnum status) {
+    public List<Vehicle> findByStatusOrderByPriceAsc(VehicleStatusEnum status) {
 
-        List<VehicleEntity> vehicleEntities = mongoRepository.findBySituacaoOrderByPrecoAsc(status);
+        List<VehicleEntity> vehicleEntities = mongoRepository.findByStatusOrderByPriceAsc(status);
 
         return vehicleEntities.stream()
                 .map(mapper::toVehicle)

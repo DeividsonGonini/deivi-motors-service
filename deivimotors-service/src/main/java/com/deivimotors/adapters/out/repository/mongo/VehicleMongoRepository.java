@@ -10,5 +10,5 @@ import java.util.UUID;
 
 
 public interface VehicleMongoRepository extends MongoRepository<VehicleEntity, UUID> {
-    List<VehicleEntity> findBySituacaoOrderByPrecoAsc(VehicleStatusEnum situacao);
+    List<VehicleEntity> findByStatusOrderByPriceAsc(VehicleStatusEnum situacao);
 }

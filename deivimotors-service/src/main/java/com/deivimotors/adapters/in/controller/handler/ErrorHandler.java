@@ -2,6 +2,7 @@ package com.deivimotors.adapters.in.controller.handler;
 
 import com.deivimotors.application.exceptions.PaymentException;
 import com.deivimotors.application.exceptions.PaymentNotFoundException;
+import com.deivimotors.application.exceptions.SaleNotFoundException;
 import com.deivimotors.application.exceptions.VehicleNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -28,9 +29,9 @@ public class ErrorHandler {
     }
 
     //Valida id_venda não existente
-    @ExceptionHandler(PaymentNotFoundException.class)
+    @ExceptionHandler(SaleNotFoundException.class)
     public ResponseEntity<ErrorResponse> handlePaymentNotFound(
-            PaymentNotFoundException ex
+            SaleNotFoundException ex
     ) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)

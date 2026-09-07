@@ -4,7 +4,6 @@ import com.deivimotors.adapters.in.controller.mapper.VehicleMapper;
 import com.deivimotors.adapters.in.controller.request.VehicleRequest;
 import com.deivimotors.adapters.in.controller.response.VehicleResponse;
 import com.deivimotors.application.exceptions.VehicleNotFoundException;
-import com.deivimotors.application.ports.in.SaleServiceInputPort;
 import com.deivimotors.application.ports.in.VehicleServiceInputPort;
 import com.deivimotors.domain.Vehicle;
 import com.deivimotors.domain.enums.VehicleStatusEnum;
@@ -48,7 +47,9 @@ public class VehicleController {
     public ResponseEntity<VehicleResponse> createVehicle(
             @Valid @RequestBody VehicleRequest request
     ){
+        System.out.println("REQUEST = " + request);
         var vehicle = mapper.toVehicle(request);
+
         service.create(vehicle);
         VehicleResponse response = mapper.toVehicleResponse(vehicle);
 

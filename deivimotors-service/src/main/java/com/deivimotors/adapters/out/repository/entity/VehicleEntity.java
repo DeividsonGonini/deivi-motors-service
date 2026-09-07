@@ -23,13 +23,13 @@ public class VehicleEntity implements Serializable {
 
     @Id
     private UUID id;
-    private String marca;
-    private String modelo;
-    private Integer ano;
-    private String cor;
+    private String brand;
+    private String model;
+    private Integer year;
+    private String color;
 
     @Field(targetType = FieldType.DECIMAL128)
-    private BigDecimal preco;
-    private VehicleStatusEnum situacao;
+    private BigDecimal price;
+    private VehicleStatusEnum status;
 
 }

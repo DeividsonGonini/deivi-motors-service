@@ -25,17 +25,6 @@ public class Sale {
         this.dateTimeSale = dateTimeSale;
     }
 
-//    public Sale(
-//            UUID id,
-//            SaleStatusEnum status
-//    ){
-//        this.id = id;
-//        this.status = status;
-//    }
-//
-//    public Sale() {
-//    }
-
     public Sale completed() throws PaymentUnprocessableEntityException {
         if (this.status != SaleStatusEnum.EM_ANDAMENTO) {
             throw new PaymentUnprocessableEntityException("The current status: " + this.status.getStatus() +

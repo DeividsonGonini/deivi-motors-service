@@ -6,12 +6,12 @@ import java.math.BigDecimal;
 public record VehicleResponse(
 
         String id,
-        String marca,
-        String modelo,
-        Integer ano,
-        String cor,
-        BigDecimal preco,
-        VehicleStatusEnum situacao
+        String brand,
+        String model,
+        Integer year,
+        String color,
+        BigDecimal price,
+        VehicleStatusEnum status
 
 ) {
 }

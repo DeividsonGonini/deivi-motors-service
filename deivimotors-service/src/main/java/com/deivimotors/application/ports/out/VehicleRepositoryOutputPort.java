@@ -15,5 +15,5 @@ public interface VehicleRepositoryOutputPort {
 
     Vehicle update(Vehicle vehicle);
 
-    List<Vehicle> findBySituacaoOrderByPrecoAsc(VehicleStatusEnum status);
+    List<Vehicle> findByStatusOrderByPriceAsc(VehicleStatusEnum status);
 }

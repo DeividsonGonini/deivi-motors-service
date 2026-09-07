@@ -1,22 +1,21 @@
 package com.deivimotors.application.service;
 
-import com.deivimotors.application.exceptions.PaymentUnprocessableEntityException;
-import com.deivimotors.application.exceptions.VehicleNotFoundException;
-import com.deivimotors.application.ports.in.PaymentServiceInputPort;
+import com.deivimotors.application.exceptions.SaleNotFoundException;
+import com.deivimotors.application.exceptions.SaleUnprocessableEntityException;
 import com.deivimotors.application.ports.in.SaleServiceInputPort;
 import com.deivimotors.application.ports.in.VehicleServiceInputPort;
 import com.deivimotors.application.ports.out.SaleRepositoryOutputPort;
 import com.deivimotors.domain.Sale;
 import com.deivimotors.domain.Vehicle;
 import com.deivimotors.domain.enums.SaleStatusEnum;
-import com.deivimotors.domain.enums.VehicleStatusEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.deivimotors.domain.enums.VehicleStatusEnum.VENDIDO;
 
 public class SaleService implements SaleServiceInputPort {
     private static final Logger logger = LoggerFactory.getLogger(SaleService.class);
@@ -39,7 +38,7 @@ public class SaleService implements SaleServiceInputPort {
 
         Vehicle vehicle = vehicleService.getById(sale.getVehicle().getId());
 
-        vehicleService.validationVehicleForSale(vehicle.getSituacao());
+        vehicleService.validationVehicleForSale(vehicle.getStatus());
 
         UUID idSale = repository.save(sale);
         logger.info("Sale Created for id: {} and client: {}", idSale, sale.getClient());
@@ -52,7 +51,7 @@ public class SaleService implements SaleServiceInputPort {
     @Override
     public Sale findById(UUID saleId) {
         Optional<Sale> optionalSale = Optional.ofNullable(repository.findById(saleId)
-                .orElseThrow(() -> new VehicleNotFoundException("Sale not found for id: : " + saleId)));
+                .orElseThrow(() -> new SaleNotFoundException("Sale not found for id: : " + saleId)));
 
         Sale sale = optionalSale.get();
 
@@ -64,27 +63,28 @@ public class SaleService implements SaleServiceInputPort {
     }
 
     @Override
-    public void updateStatus(UUID saleId, SaleStatusEnum status) {
+    public void updateStatus(UUID saleId, SaleStatusEnum status) throws SaleUnprocessableEntityException {
         var sale = findById(saleId);
 
         if (sale.getStatus().equals(SaleStatusEnum.CONCLUIDO) ||
                 sale.getStatus().equals(SaleStatusEnum.CANCELADO)) {
-            throw new PaymentUnprocessableEntityException(
+            throw new SaleUnprocessableEntityException(
                     "The sale cannot be changed, as it has already been finalized. Current sale status : " + sale.getStatus());
         }
 
         switch (status) {
-            case EM_ANDAMENTO -> throw new PaymentUnprocessableEntityException(
+            case EM_ANDAMENTO -> throw new SaleUnprocessableEntityException(
                     "Invalid status sequence for this update. Requested status: " + status);
             case CONCLUIDO -> {
                 Sale saleUpdated = sale.completed();
                 repository.save(saleUpdated);
+                vehicleService.updateStatus(sale.getVehicle().getId(), VENDIDO);
             }
             case CANCELADO -> {
                 Sale saleUpdated = sale.canceled();
                 repository.save(saleUpdated);
             }
-            default -> throw new PaymentUnprocessableEntityException(
+            default -> throw new SaleUnprocessableEntityException(
                     "The current sale status: " + sale.getStatus() + " cannot be completed");
         }
     }

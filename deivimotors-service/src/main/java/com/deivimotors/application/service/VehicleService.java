@@ -2,9 +2,12 @@ package com.deivimotors.application.service;
 
 import com.deivimotors.application.exceptions.PaymentUnprocessableEntityException;
 import com.deivimotors.application.exceptions.VehicleNotFoundException;
+import com.deivimotors.application.exceptions.VehicleUnprocessableEntityException;
 import com.deivimotors.application.ports.out.VehicleRepositoryOutputPort;
+import com.deivimotors.domain.Sale;
 import com.deivimotors.domain.Vehicle;
 import com.deivimotors.application.ports.in.VehicleServiceInputPort;
+import com.deivimotors.domain.enums.SaleStatusEnum;
 import com.deivimotors.domain.enums.VehicleStatusEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +29,7 @@ public class VehicleService implements VehicleServiceInputPort {
 
         UUID id = UUID.randomUUID();
         vehicle.setId(id);
-        vehicle.setSituacao(VehicleStatusEnum.A_VENDA);
+        vehicle.setStatus(VehicleStatusEnum.A_VENDA);
 
         UUID idVehicle = repository.save(vehicle);
         return idVehicle;
@@ -53,7 +56,7 @@ public class VehicleService implements VehicleServiceInputPort {
 
     @Override
     public List<Vehicle> findBySituacaoOrderByPrecoAsc(VehicleStatusEnum status) {
-        return repository.findBySituacaoOrderByPrecoAsc(status);
+        return repository.findByStatusOrderByPriceAsc(status);
     }
 
     @Override
@@ -70,13 +73,38 @@ public class VehicleService implements VehicleServiceInputPort {
         return vehicle.get();
     }
 
+    @Override
+    public void updateStatus(UUID vehicleId, VehicleStatusEnum status) {
+        var vehicle = findById(vehicleId);
+
+        if (vehicle.getStatus().equals(VehicleStatusEnum.VENDIDO)) {
+            throw new VehicleUnprocessableEntityException(
+                    "The vehicle cannot be changed, as it has already been finalized. Current sale status : " + vehicle.getStatus());
+        }
+
+        switch (status) {
+            case  A_VENDA -> throw new VehicleUnprocessableEntityException(
+                    "Invalid status sequence for this update. Requested status: " + status);
+            case VENDIDO -> {
+                Vehicle vehicleUpdated = vehicle.sold();
+                repository.save(vehicleUpdated);
+            }
+            case INATIVO -> {
+                Vehicle vehicleUpdated = vehicle.inactive();
+                repository.save(vehicleUpdated);
+            }
+            default -> throw new VehicleUnprocessableEntityException(
+                    "The vehicle's current status: " + vehicle.getStatus() + " cannot be changed");
+        }
+    }
+
     private Vehicle updateFrom(Vehicle currentVehicle, Vehicle vehicleToUpdate){
-        if(vehicleToUpdate.getMarca() != null) currentVehicle.setMarca(vehicleToUpdate.getMarca());
-        if(vehicleToUpdate.getModelo() != null) currentVehicle.setModelo(vehicleToUpdate.getModelo());
-        if(vehicleToUpdate.getAno() != null) currentVehicle.setAno(vehicleToUpdate.getAno());
-        if(vehicleToUpdate.getCor() != null) currentVehicle.setCor(vehicleToUpdate.getCor());
-        if(vehicleToUpdate.getPreco() != null) currentVehicle.setPreco(vehicleToUpdate.getPreco());
-        if(vehicleToUpdate.getSituacao() != null) currentVehicle.setSituacao(vehicleToUpdate.getSituacao());
+        if(vehicleToUpdate.getBrand() != null) currentVehicle.setBrand(vehicleToUpdate.getBrand());
+        if(vehicleToUpdate.getModel() != null) currentVehicle.setModel(vehicleToUpdate.getModel());
+        if(vehicleToUpdate.getYear() != null) currentVehicle.setYear(vehicleToUpdate.getYear());
+        if(vehicleToUpdate.getColor() != null) currentVehicle.setColor(vehicleToUpdate.getColor());
+        if(vehicleToUpdate.getPrice() != null) currentVehicle.setPrice(vehicleToUpdate.getPrice());
+        if(vehicleToUpdate.getStatus() != null) currentVehicle.setStatus(vehicleToUpdate.getStatus());
         return  currentVehicle;
     }
 }

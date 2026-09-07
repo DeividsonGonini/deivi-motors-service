@@ -1,8 +1,9 @@
 package com.deivimotors.domain.enums;
 
 public enum VehicleStatusEnum {
-    A_VENDA("à venda"),
-    VENDIDO("vendido");
+    A_VENDA("A_VENDA"),
+    VENDIDO("VENDIDO"),
+    INATIVO("INATIVO");
 
     private String status;
 
