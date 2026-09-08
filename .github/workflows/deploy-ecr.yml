@@ -57,6 +57,7 @@ jobs:
       #######################################################################
 
       - name: Get ECR repository URLs
+        working-directory: infra/terraform
         run: |
           echo "ECR_DEIVI_MOTORS_SERVICE=$(terraform output -raw ecr_deivimotors_service_url)" >> "$GITHUB_ENV"
           echo "ECR_WEBHOOK=$(terraform output -raw ecr_webhook_url)" >> "$GITHUB_ENV"
