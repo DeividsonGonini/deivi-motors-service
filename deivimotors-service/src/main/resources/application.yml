@@ -16,7 +16,7 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@fiap.jlvopvm.mongodb.net/deivimotorsDB?retryWrites=true&w=majority
+      uri: mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@deivi-motors.onpvgwz.mongodb.net/deivimotorsDB?retryWrites=true&w=majority&appName=deivi-motors
 
 management:
   endpoints:
