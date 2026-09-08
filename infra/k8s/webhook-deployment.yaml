@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webhook
+  namespace: deivi-motors-k8s
+  labels:
+    app: webhook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webhook
+  template:
+    metadata:
+      labels:
+        app: webhook
+        component: webhook
+    spec:
+      serviceAccountName: deivi-motors-sa
+      containers:
+        - name: webhook
+          image: 404234478011.dkr.ecr.us-east-1.amazonaws.com/deivimotors-webhook:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9090
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: >
+                -XX:MaxRAMPercentage=70
+                -XX:InitialRAMPercentage=50
+                -XX:+UseG1GC
+            - name: AWS_REGION
+              value: us-east-1
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+       # BLOQUEIA readiness/liveness até o app subir
+          startupProbe:
+            httpGet:
+              path: /webhook/actuator/health
+              port: 9090
+            failureThreshold: 30   # 30 tentativas
+            periodSeconds: 10      # a cada 10s → até 5 minutos
+         #READINESS (receber tráfego)
+          readinessProbe:
+            httpGet:
+              path: /webhook/actuator/health
+              port: 9090
+            initialDelaySeconds: 30
+            periodSeconds: 20
+        # LIVENESS (reinicia só se TRAVAR)
+          livenessProbe:
+            httpGet:
+              path: /webhook/actuator/health
+              port: 9090
+            initialDelaySeconds: 120
+            timeoutSeconds: 5
+            periodSeconds: 60
+            failureThreshold: 3
+      restartPolicy: Always
