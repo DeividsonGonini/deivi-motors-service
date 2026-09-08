@@ -35,7 +35,7 @@ resource "aws_ecr_lifecycle_policy" "deivimotors_service" {
 # WEBHOOK
 # Cria ECR
 resource "aws_ecr_repository" "webhook" {
-  name                 = "webhook"
+  name                 = "deivimotors-webhook"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
