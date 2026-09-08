@@ -13,8 +13,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      #######################################################################
+      # CHECKOUT
+      #######################################################################
+
       - name: Checkout
         uses: actions/checkout@v4
+
+      #######################################################################
+      # AWS
+      #######################################################################
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -22,6 +30,40 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
+
+      #######################################################################
+      # TERRAFORM
+      #######################################################################
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.6
+
+      - name: Terraform Init
+        working-directory: infra/terraform
+        run: terraform init
+
+      - name: Terraform Validate
+        working-directory: infra/terraform
+        run: terraform validate
+
+      - name: Terraform Apply
+        working-directory: infra/terraform
+        run: terraform apply -auto-approve
+
+      #######################################################################
+      # OBTÉM URL DOS REPOSITÓRIOS ECR
+      #######################################################################
+
+      - name: Get ECR repository URLs
+        run: |
+          echo "ECR_DEIVI_MOTORS_SERVICE=$(terraform output -raw ecr_deivimotors_service_url)" >> "$GITHUB_ENV"
+          echo "ECR_WEBHOOK=$(terraform output -raw ecr_webhook_url)" >> "$GITHUB_ENV"
+
+      #######################################################################
+      # LOGIN AMAZON ECR
+      #######################################################################
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
@@ -32,19 +74,27 @@ jobs:
 
       - name: Build deivimotors-service image
         run: |
-          docker build -t deivimotors-service:${{ env.IMAGE_TAG }} ./deivimotors-service
+          docker build \
+            -t deivimotors-service:${{ env.IMAGE_TAG }} \
+            ./deivimotors-service
 
       - name: Tag deivimotors-service
         run: |
-          docker tag deivimotors-service:${{ env.IMAGE_TAG }} \
-            ${{ secrets.ECR_DEIVI_MOTORS_SERVICE }}:${{ env.IMAGE_TAG }}
-          docker tag deivimotors-service:${{ env.IMAGE_TAG }} \
-            ${{ secrets.ECR_DEIVI_MOTORS_SERVICE }}:latest
+          docker tag \
+            deivimotors-service:${{ env.IMAGE_TAG }} \
+            "${ECR_DEIVI_MOTORS_SERVICE}:${{ env.IMAGE_TAG }}"
+
+          docker tag \
+            deivimotors-service:${{ env.IMAGE_TAG }} \
+            "${ECR_DEIVI_MOTORS_SERVICE}:latest"
 
       - name: Push deivimotors-service
         run: |
-          docker push ${{ secrets.ECR_DEIVI_MOTORS_SERVICE }}:${{ env.IMAGE_TAG }}
-          docker push ${{ secrets.ECR_DEIVI_MOTORS_SERVICE }}:latest
+          docker push \
+            "${ECR_DEIVI_MOTORS_SERVICE}:${{ env.IMAGE_TAG }}"
+
+          docker push \
+            "${ECR_DEIVI_MOTORS_SERVICE}:latest"
 
       #######################################################################
       # BUILD + PUSH webhook
@@ -52,16 +102,24 @@ jobs:
 
       - name: Build webhook image
         run: |
-          docker build -t webhook:${{ env.IMAGE_TAG }} ./webhook
+          docker build \
+            -t webhook:${{ env.IMAGE_TAG }} \
+            ./webhook
 
       - name: Tag webhook
         run: |
-          docker tag webhook:${{ env.IMAGE_TAG }} \
-            ${{ secrets.ECR_WEBHOOK }}:${{ env.IMAGE_TAG }}
-          docker tag webhook:${{ env.IMAGE_TAG }} \
-            ${{ secrets.ECR_WEBHOOK }}:latest
+          docker tag \
+            webhook:${{ env.IMAGE_TAG }} \
+            "${ECR_WEBHOOK}:${{ env.IMAGE_TAG }}"
+
+          docker tag \
+            webhook:${{ env.IMAGE_TAG }} \
+            "${ECR_WEBHOOK}:latest"
 
       - name: Push webhook
         run: |
-          docker push ${{ secrets.ECR_WEBHOOK }}:${{ env.IMAGE_TAG }}
-          docker push ${{ secrets.ECR_WEBHOOK }}:latest
+          docker push \
+            "${ECR_WEBHOOK}:${{ env.IMAGE_TAG }}"
+
+          docker push \
+            "${ECR_WEBHOOK}:latest"
