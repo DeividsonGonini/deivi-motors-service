@@ -19,7 +19,7 @@ import java.util.UUID;
 public class PaymentEntity implements Serializable {
 
     @Id
-    private String id;
+    private UUID id;
 
     private UUID saleId;
 

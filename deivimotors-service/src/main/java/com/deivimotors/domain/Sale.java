@@ -1,5 +1,6 @@
 package com.deivimotors.domain;
 
+import com.deivimotors.application.exceptions.PaymentUnprocessableEntityException;
 import com.deivimotors.domain.enums.SaleStatusEnum;
 
 import java.time.LocalDateTime;
@@ -22,6 +23,20 @@ public class Sale {
         this.status = status;
         this.client = client;
         this.dateTimeSale = dateTimeSale;
+    }
+
+    public Sale completed() throws PaymentUnprocessableEntityException {
+        if (this.status != SaleStatusEnum.EM_ANDAMENTO) {
+            throw new PaymentUnprocessableEntityException("The current status: " + this.status.getStatus() +
+                    " does not allow sale completed.");
+        }
+        this.status = SaleStatusEnum.CONCLUIDO;
+        return this;
+    }
+
+    public Sale canceled() throws PaymentUnprocessableEntityException {
+       this.status = SaleStatusEnum.CANCELADO;
+       return this;
     }
 
     public UUID getId() {

@@ -9,23 +9,21 @@ import java.math.BigDecimal;
 public record VehicleRequest(
 
         @NotBlank
-        String marca,
+        String brand,
 
         @NotBlank
-        String modelo,
+        String model,
 
         @NotNull
         @Positive
-        Integer ano,
+        Integer year,
 
         @NotBlank
-        String cor,
+        String color,
 
         @NotNull
         @Positive
-        BigDecimal preco
+        BigDecimal price
 
-//        @NotNull
-//        VehicleStatusEnum situacao
 ) {
 }

@@ -10,17 +10,17 @@ import java.util.UUID;
 
 public class Payment implements Serializable {
 
-    private String id;
+    private UUID id;
     private UUID saleId;
     private PaymentStatusEnum status;
 
-    public Payment(UUID saleId) {
-        this.id = null;
+    public Payment(UUID id, UUID saleId) {
+        this.id = id;
         this.saleId = saleId;
         this.status = PaymentStatusEnum.AGUARDANDO_PAGAMENTO;
     }
 
-    public Payment(String id, UUID saleId, PaymentStatusEnum status) {
+    public Payment(UUID id, UUID saleId, PaymentStatusEnum status) {
         this.id = id;
         this.saleId = saleId;
         this.status = status;
@@ -46,7 +46,7 @@ public class Payment implements Serializable {
                 PaymentStatusEnum.PAGAMENTO_RECUSADO);
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -58,7 +58,7 @@ public class Payment implements Serializable {
         return status;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

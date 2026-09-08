@@ -7,6 +7,8 @@ import com.deivimotors.domain.Vehicle;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 @Mapper(componentModel = "spring")
 public interface SaleMapper {
 
@@ -15,7 +17,7 @@ public interface SaleMapper {
 
     SaleResponse toSaleResponse(Sale sale);
 
-    default Vehicle map(String vehicleId) {
+    default Vehicle map(UUID vehicleId) {
         return vehicleId == null ? null : Vehicle.fromId(vehicleId);
     }
 }

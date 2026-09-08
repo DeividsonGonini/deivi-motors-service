@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/v1/vehicles")
@@ -46,7 +47,9 @@ public class VehicleController {
     public ResponseEntity<VehicleResponse> createVehicle(
             @Valid @RequestBody VehicleRequest request
     ){
+        System.out.println("REQUEST = " + request);
         var vehicle = mapper.toVehicle(request);
+
         service.create(vehicle);
         VehicleResponse response = mapper.toVehicleResponse(vehicle);
 
@@ -67,7 +70,7 @@ public class VehicleController {
             )
     })
     @GetMapping("/{id}")
-    public ResponseEntity<VehicleResponse> findById(@PathVariable String id) throws VehicleNotFoundException{
+    public ResponseEntity<VehicleResponse> findById(@PathVariable UUID id) throws VehicleNotFoundException{
         Vehicle vehicle = service.getById(id);
         VehicleResponse response = mapper.toVehicleResponse(vehicle);
         return ResponseEntity.ok().body(response);
@@ -87,7 +90,7 @@ public class VehicleController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<VehicleResponse> update(
-            @PathVariable String id,
+            @PathVariable UUID id,
             @Valid @RequestBody VehicleRequest request
     ){
         Vehicle vehicle = mapper.toVehicle(request);

@@ -15,6 +15,17 @@ services:
     depends_on:
       - mongodb
 
+  webhook:
+    build:
+      context: ./webhook
+      dockerfile: Dockerfile
+    container_name: webhook-service
+    ports:
+      - "9090:9090"
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+    depends_on:
+      - deivi-motors-service
 
   mongodb:
     image: mongo:6

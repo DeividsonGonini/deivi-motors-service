@@ -1,0 +1,34 @@
+server:
+  port: 9090
+  servlet:
+    context-path: /webhook
+
+spring:
+  application:
+    name: Webhook
+
+  output:
+    ansi:
+      enabled: always
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui
+
+deivi-motors-service:
+  checkout-payment:
+    url: http://localhost:8082
+#Teste via docker
+#    url: http://deivi-motors-service:8082

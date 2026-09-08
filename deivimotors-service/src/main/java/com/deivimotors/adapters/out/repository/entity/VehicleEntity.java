@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.FieldType;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Setter
 @Getter
@@ -21,14 +22,14 @@ import java.math.BigDecimal;
 public class VehicleEntity implements Serializable {
 
     @Id
-    private String id;
-    private String marca;
-    private String modelo;
-    private Integer ano;
-    private String cor;
+    private UUID id;
+    private String brand;
+    private String model;
+    private Integer year;
+    private String color;
 
     @Field(targetType = FieldType.DECIMAL128)
-    private BigDecimal preco;
-    private VehicleStatusEnum situacao;
+    private BigDecimal price;
+    private VehicleStatusEnum status;
 
 }

@@ -6,8 +6,9 @@ import com.deivimotors.domain.enums.VehicleStatusEnum;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 
-public interface VehicleMongoRepository extends MongoRepository<VehicleEntity, String> {
-    List<VehicleEntity> findBySituacaoOrderByPrecoAsc(VehicleStatusEnum situacao);
+public interface VehicleMongoRepository extends MongoRepository<VehicleEntity, UUID> {
+    List<VehicleEntity> findByStatusOrderByPriceAsc(VehicleStatusEnum situacao);
 }

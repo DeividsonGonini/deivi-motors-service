@@ -19,7 +19,7 @@ public class PaymentRepositoryAdapter implements PaymentRepositoryOutputPort {
     private final PaymentEntityMapper mapper;
 
     @Override
-    public String save(Payment payment) throws PaymentNotFoundException {
+    public UUID save(Payment payment) throws PaymentNotFoundException {
         var paymentEntity = mapper.toPaymentEntity(payment);
         PaymentEntity paymentSave = mongoRepository.save(paymentEntity);
 
