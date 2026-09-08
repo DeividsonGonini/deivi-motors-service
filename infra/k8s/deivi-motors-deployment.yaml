@@ -22,7 +22,7 @@ spec:
           image: 404234478011.dkr.ecr.us-east-1.amazonaws.com/deivimotors-service:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - containerPort: 8082
           env:
             - name: JAVA_TOOL_OPTIONS
               value: >
@@ -55,21 +55,21 @@ spec:
           startupProbe:
             httpGet:
               path: /deivi_motors/actuator/health
-              port: 8080
+              port: 8082
             failureThreshold: 30 # 30 tentativas
             periodSeconds: 10 # a cada 10s → até 5 minutos
           #READINESS (receber tráfego)
           readinessProbe:
             httpGet:
               path: /deivi_motors/actuator/health
-              port: 8080
+              port: 8082
             initialDelaySeconds: 30
             periodSeconds: 20
           # LIVENESS (reinicia só se TRAVAR)
           livenessProbe:
             httpGet:
               path: /deivi_motors/actuator/health
-              port: 8080
+              port: 8082
             initialDelaySeconds: 120
             timeoutSeconds: 5
             periodSeconds: 60
