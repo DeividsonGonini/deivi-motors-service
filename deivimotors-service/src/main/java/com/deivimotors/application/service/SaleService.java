@@ -35,7 +35,7 @@ public class SaleService implements SaleServiceInputPort {
     }
 
     @Override
-    public Sale create(Sale sale) {
+    public Sale create(Sale sale) throws SaleUnprocessableEntityException {
         UUID id = UUID.randomUUID();
         sale.setId(id);
         sale.setStatus(SaleStatusEnum.EM_ANDAMENTO);
@@ -46,14 +46,19 @@ public class SaleService implements SaleServiceInputPort {
          * Caso não, utiliza o cliente passado na requisição
          */
         authenticatedUserProvider.getCurrentUser()
-                .ifPresent(user -> sale.setClient(user.cpf()));
+                .ifPresent(user -> sale.setCustomerCpf(user.cpf()));
 
+        if (sale.getCustomerCpf() == null || sale.getCustomerCpf().isBlank()) {
+            throw new SaleUnprocessableEntityException(
+                    "Customer CPF was not provided"
+            );
+        }
 
         Vehicle vehicle = vehicleService.getById(sale.getVehicle().getId());
         vehicleService.validationVehicleForSale(vehicle.getStatus());
 
         UUID idSale = repository.save(sale);
-        logger.info("Sale Created for id: {} and client: {}", idSale, sale.getClient());
+        logger.info("Sale Created for id: {} and customerCpf: {}", idSale, sale.getCustomerCpf());
 
         sale.setVehicle(vehicle);
 
@@ -61,11 +66,20 @@ public class SaleService implements SaleServiceInputPort {
     }
 
     @Override
-    public Sale findById(UUID saleId) {
+    public Sale findById(UUID saleId) throws SaleNotFoundException, SaleUnprocessableEntityException {
         Optional<Sale> optionalSale = Optional.ofNullable(repository.findById(saleId)
                 .orElseThrow(() -> new SaleNotFoundException("Sale not found for id: : " + saleId)));
 
         Sale sale = optionalSale.get();
+
+        authenticatedUserProvider.getCurrentUser()
+                .ifPresent(user -> {
+                    if (!user.cpf().equals(sale.getCustomerCpf())) {
+                        throw new SaleUnprocessableEntityException(
+                                "The sale does not belong to the requested customer"
+                        );
+                    }
+                });
 
         Vehicle vehicle = vehicleService.getById(sale.getVehicle().getId());
 

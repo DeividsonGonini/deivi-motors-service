@@ -3,11 +3,11 @@ package com.deivimotors.adapters.in.controller;
 import com.deivimotors.adapters.in.controller.mapper.SaleMapper;
 import com.deivimotors.adapters.in.controller.request.SaleRequest;
 import com.deivimotors.adapters.in.controller.response.SaleResponse;
-import com.deivimotors.adapters.in.controller.response.VehicleResponse;
+import com.deivimotors.application.exceptions.SaleNotFoundException;
+import com.deivimotors.application.exceptions.SaleUnprocessableEntityException;
 import com.deivimotors.application.exceptions.VehicleNotFoundException;
 import com.deivimotors.application.ports.in.SaleServiceInputPort;
 import com.deivimotors.domain.Sale;
-import com.deivimotors.domain.Vehicle;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -42,9 +42,9 @@ public class SaleController {
             )
     })
     @PostMapping
-    public ResponseEntity<SaleResponse> create(
+    public ResponseEntity<SaleResponse> create (
             @Valid @RequestBody SaleRequest request
-    ){
+    ) throws SaleUnprocessableEntityException{
         Sale sale = mapper.toSale(request);
         Sale saleSave = service.create(sale);
 
@@ -66,7 +66,7 @@ public class SaleController {
             )
     })
     @GetMapping("/{id}")
-    public ResponseEntity<SaleResponse> findById(@PathVariable UUID id) throws VehicleNotFoundException {
+    public ResponseEntity<SaleResponse> findById(@PathVariable UUID id) throws VehicleNotFoundException, SaleNotFoundException,  SaleUnprocessableEntityException {
         Sale sale = service.findById(id);
         SaleResponse response = mapper.toSaleResponse(sale);
         return ResponseEntity.ok().body(response);

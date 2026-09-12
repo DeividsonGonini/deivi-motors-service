@@ -10,18 +10,18 @@ public class Sale {
     private UUID id;
     private Vehicle vehicle;
     private SaleStatusEnum status;
-    private String client;
+    private String customerCpf;
     private LocalDateTime dateTimeSale;
 
     public Sale(UUID id,
                 Vehicle vehicle,
                 SaleStatusEnum status,
-                String client,
+                String customerCpf,
                 LocalDateTime dateTimeSale) {
         this.id = id;
         this.vehicle = vehicle;
         this.status = status;
-        this.client = client;
+        this.customerCpf = customerCpf;
         this.dateTimeSale = dateTimeSale;
     }
 
@@ -63,12 +63,12 @@ public class Sale {
         this.status = status;
     }
 
-    public String getClient() {
-        return client;
+    public String getCustomerCpf() {
+        return customerCpf;
     }
 
-    public void setClient(String client) {
-        this.client = client;
+    public void setCustomerCpf(String customerCpf) {
+        this.customerCpf = customerCpf;
     }
 
     public LocalDateTime getDateTimeSale() {

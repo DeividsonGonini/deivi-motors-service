@@ -1,9 +1,6 @@
 package com.deivimotors.adapters.in.controller.handler;
 
-import com.deivimotors.application.exceptions.PaymentException;
-import com.deivimotors.application.exceptions.PaymentNotFoundException;
-import com.deivimotors.application.exceptions.SaleNotFoundException;
-import com.deivimotors.application.exceptions.VehicleNotFoundException;
+import com.deivimotors.application.exceptions.*;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +17,7 @@ public class ErrorHandler {
 
     //Valida veículo não existente
     @ExceptionHandler(VehicleNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handlePaymentNotFound(
+    public ResponseEntity<ErrorResponse> handleVehicleNotFound(
             VehicleNotFoundException ex
     ) {
         return ResponseEntity
@@ -28,13 +25,33 @@ public class ErrorHandler {
                 .body(new ErrorResponse(ex.getMessage()));
     }
 
+    //Valida erro processamento Veiculo
+    @ExceptionHandler(VehicleUnprocessableEntityException.class)
+    public ResponseEntity<ErrorResponse> handleVehicleUnprocessable(
+            VehicleUnprocessableEntityException ex
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(new ErrorResponse(ex.getMessage()));
+    }
+
     //Valida id_venda não existente
     @ExceptionHandler(SaleNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handlePaymentNotFound(
+    public ResponseEntity<ErrorResponse> handleSaleNotFound(
             SaleNotFoundException ex
     ) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse(ex.getMessage()));
+    }
+
+    //Valida erro processamento Venda
+    @ExceptionHandler(SaleUnprocessableEntityException.class)
+    public ResponseEntity<ErrorResponse> handleSaleUnprocessable(
+            SaleUnprocessableEntityException ex
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(new ErrorResponse(ex.getMessage()));
     }
 
@@ -63,14 +80,6 @@ public class ErrorHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(error);
     }
-
-//
-//    @ExceptionHandler(OrderException.class)
-//    public ResponseEntity<String> handleOrderException(OrderException exception) {
-//        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
-//    }
-
-
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {

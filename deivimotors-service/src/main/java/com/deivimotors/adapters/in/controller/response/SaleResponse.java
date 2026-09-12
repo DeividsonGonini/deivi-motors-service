@@ -8,7 +8,7 @@ import java.util.UUID;
 public record SaleResponse(
         UUID id,
         VehicleResponse vehicle,
-        String client,
+        String customerCpf,
         SaleStatusEnum status,
         LocalDateTime dateTimeSale
 ) {
