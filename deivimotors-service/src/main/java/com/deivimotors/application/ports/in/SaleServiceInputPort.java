@@ -5,6 +5,7 @@ import com.deivimotors.application.exceptions.SaleUnprocessableEntityException;
 import com.deivimotors.domain.Sale;
 import com.deivimotors.domain.enums.SaleStatusEnum;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface SaleServiceInputPort {
@@ -14,5 +15,9 @@ public interface SaleServiceInputPort {
 
     void updateStatus(UUID saleId, SaleStatusEnum status);
 
-    Sale update(UUID saleId, Sale sale);
+    List<Sale> findByCustomerCpfOrderByDateTimeSaleDesc();
+
+    List<Sale> findByCustomerCpfAdmin(String cpf);
+
+//    Sale update(UUID saleId, Sale sale);
 }

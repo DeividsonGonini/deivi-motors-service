@@ -20,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -56,10 +57,10 @@ public class SaleController {
 
     @Operation(summary = "Buscar venda pelo ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Venda localizado"),
+            @ApiResponse(responseCode = "200", description = "Venda localizada"),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Venda não localizado",
+                    description = "Venda não localizada",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = String.class)
                     )
@@ -71,4 +72,51 @@ public class SaleController {
         SaleResponse response = mapper.toSaleResponse(sale);
         return ResponseEntity.ok().body(response);
     }
+
+    @Operation(summary = "Endpoint administrativo - Buscar vendas pelo CPF do client")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Vendas localizadas"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Venda não localizado",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)
+                    )
+            )
+    })
+    @GetMapping("/customer/{cpf}")
+    public ResponseEntity<List<SaleResponse>> findByCustomerCpfAdmin(@PathVariable String cpf) throws VehicleNotFoundException, SaleNotFoundException,  SaleUnprocessableEntityException {
+        List<Sale> sales = service.findByCustomerCpfAdmin(cpf);
+
+        List<SaleResponse> response = sales.stream()
+                .map(mapper::toSaleResponse)
+                .toList();
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @Operation(summary = "Buscar vendas pelo CPF do client logado")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Vendas localizadas"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Venda não localizado",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)
+                    )
+            )
+    })
+    @GetMapping("/customer/purchases")
+    public ResponseEntity<List<SaleResponse>> findByCustomerCpf() throws VehicleNotFoundException, SaleNotFoundException,  SaleUnprocessableEntityException {
+        List<Sale> sales = service.findByCustomerCpfOrderByDateTimeSaleDesc();
+
+        List<SaleResponse> response = sales.stream()
+                .map(mapper::toSaleResponse)
+                .toList();
+
+        return ResponseEntity.ok().body(response);
+    }
+
+
+
 }

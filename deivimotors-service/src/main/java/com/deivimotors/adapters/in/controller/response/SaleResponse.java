@@ -2,6 +2,7 @@ package com.deivimotors.adapters.in.controller.response;
 
 import com.deivimotors.domain.enums.SaleStatusEnum;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -10,6 +11,7 @@ public record SaleResponse(
         VehicleResponse vehicle,
         String customerCpf,
         SaleStatusEnum status,
-        LocalDateTime dateTimeSale
+        LocalDateTime dateTimeSale,
+        BigDecimal totalPrice
 ) {
 }

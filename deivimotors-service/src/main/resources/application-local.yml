@@ -10,7 +10,7 @@ spring:
 #Exige um JWT
 app:
   security:
-    jwt-enabled: false
+    jwt-enabled: true
 
   output:
     ansi:

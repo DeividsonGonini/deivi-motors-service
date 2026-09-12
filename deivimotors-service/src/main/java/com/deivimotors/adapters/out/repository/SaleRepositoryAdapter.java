@@ -8,6 +8,7 @@ import com.deivimotors.domain.Sale;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,5 +36,14 @@ public class SaleRepositoryAdapter implements SaleRepositoryOutputPort {
     @Override
     public Sale update(Sale sale) {
         return null;
+    }
+
+    @Override
+    public List<Sale> findByCustomerCpfOrderByDateTimeSaleDesc(String custormerCpf) {
+        List<SaleEntity> saleEntities = mongoRepository.findByCustomerCpfOrderByDateTimeSaleDesc(custormerCpf);
+
+        return saleEntities.stream()
+                .map(mapper::toSale)
+                .toList();
     }
 }
