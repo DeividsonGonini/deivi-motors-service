@@ -5,6 +5,7 @@ import com.deivimotors.application.exceptions.SaleUnprocessableEntityException;
 import com.deivimotors.application.ports.in.SaleServiceInputPort;
 import com.deivimotors.application.ports.in.VehicleServiceInputPort;
 import com.deivimotors.application.ports.out.SaleRepositoryOutputPort;
+import com.deivimotors.config.security.AuthenticatedUserProvider;
 import com.deivimotors.domain.Sale;
 import com.deivimotors.domain.Vehicle;
 import com.deivimotors.domain.enums.SaleStatusEnum;
@@ -22,11 +23,15 @@ public class SaleService implements SaleServiceInputPort {
 
     private final SaleRepositoryOutputPort repository;
     private final VehicleServiceInputPort vehicleService;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
+
 
     public SaleService(SaleRepositoryOutputPort repository,
-                       VehicleServiceInputPort vehicleService) {
+                       VehicleServiceInputPort vehicleService,
+                       AuthenticatedUserProvider authenticatedUserProvider) {
         this.repository = repository;
         this.vehicleService = vehicleService;
+        this.authenticatedUserProvider = authenticatedUserProvider;
     }
 
     @Override
@@ -36,8 +41,15 @@ public class SaleService implements SaleServiceInputPort {
         sale.setStatus(SaleStatusEnum.EM_ANDAMENTO);
         sale.setDateTimeSale(LocalDateTime.now());
 
-        Vehicle vehicle = vehicleService.getById(sale.getVehicle().getId());
+        /**
+         * Caso tenha usuário autenticado, seta o CPF do cliente recuperado do token
+         * Caso não, utiliza o cliente passado na requisição
+         */
+        authenticatedUserProvider.getCurrentUser()
+                .ifPresent(user -> sale.setClient(user.cpf()));
 
+
+        Vehicle vehicle = vehicleService.getById(sale.getVehicle().getId());
         vehicleService.validationVehicleForSale(vehicle.getStatus());
 
         UUID idSale = repository.save(sale);

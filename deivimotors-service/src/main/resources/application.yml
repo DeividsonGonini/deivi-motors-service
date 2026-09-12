@@ -11,6 +11,10 @@ spring:
   application:
     name: Deivi Motors
 
+app:
+  security:
+    jwt-enabled: true
+
   main:
     allow-bean-definition-overriding: true
 
