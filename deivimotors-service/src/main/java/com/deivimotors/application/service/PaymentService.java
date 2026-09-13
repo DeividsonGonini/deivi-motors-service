@@ -53,7 +53,7 @@ public class PaymentService implements PaymentServiceInputPort {
 
     @Override
     public Payment findPaymentBySaleId(UUID saleId) throws PaymentNotFoundException {
-        logger.info("Starting find for sale: id" + saleId);
+        logger.info("Starting find for sale id: " + saleId);
         return repository.getBySaleId(saleId)
                 .orElseThrow(() ->
                         new PaymentNotFoundException("Payment for sale with id: " + saleId + " not found"));

@@ -1,8 +1,8 @@
 package com.deivimotors.application.usecase;
 
 import com.deivimotors.domain.CallbackPayment;
-import com.deivimotors.domain.ports.in.CallbackPaymentInputPort;
-import com.deivimotors.domain.ports.out.CallbackPaymentOutputPort;
+import com.deivimotors.application.ports.in.CallbackPaymentInputPort;
+import com.deivimotors.application.ports.out.CallbackPaymentOutputPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

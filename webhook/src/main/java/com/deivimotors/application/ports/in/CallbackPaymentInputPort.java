@@ -1,4 +1,4 @@
-package com.deivimotors.domain.ports.in;
+package com.deivimotors.application.ports.in;
 
 import com.deivimotors.domain.CallbackPayment;
 

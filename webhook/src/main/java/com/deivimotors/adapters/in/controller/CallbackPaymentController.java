@@ -3,7 +3,7 @@ package com.deivimotors.adapters.in.controller;
 import com.deivimotors.adapters.in.controller.mapper.CallbackPaymentMapper;
 import com.deivimotors.adapters.in.controller.request.CallbackPaymentRequest;
 import com.deivimotors.domain.CallbackPayment;
-import com.deivimotors.domain.ports.in.CallbackPaymentInputPort;
+import com.deivimotors.application.ports.in.CallbackPaymentInputPort;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

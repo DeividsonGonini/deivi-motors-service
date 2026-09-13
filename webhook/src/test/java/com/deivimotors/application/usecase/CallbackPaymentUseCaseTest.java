@@ -2,7 +2,7 @@ package com.deivimotors.application.usecase;
 
 import com.deivimotors.domain.CallbackPayment;
 import com.deivimotors.domain.PaymentStatusEnum;
-import com.deivimotors.domain.ports.out.CallbackPaymentOutputPort;
+import com.deivimotors.application.ports.out.CallbackPaymentOutputPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
