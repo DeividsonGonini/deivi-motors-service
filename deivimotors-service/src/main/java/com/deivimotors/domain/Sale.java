@@ -29,6 +29,9 @@ public class Sale {
         this.totalPrice = totalPrice;
     }
 
+    public Sale() {
+    }
+
     public Sale completed() throws PaymentUnprocessableEntityException {
         if (this.status != SaleStatusEnum.EM_ANDAMENTO) {
             throw new PaymentUnprocessableEntityException("The current status: " + this.status.getStatus() +

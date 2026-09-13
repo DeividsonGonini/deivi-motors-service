@@ -6,6 +6,7 @@ import com.deivimotors.adapters.in.controller.response.SaleResponse;
 import com.deivimotors.application.exceptions.SaleNotFoundException;
 import com.deivimotors.application.exceptions.SaleUnprocessableEntityException;
 import com.deivimotors.application.exceptions.VehicleNotFoundException;
+import com.deivimotors.application.ports.in.CreateSaleServiceInputPort;
 import com.deivimotors.application.ports.in.SaleServiceInputPort;
 import com.deivimotors.domain.Sale;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +30,8 @@ import java.util.UUID;
 @Validated
 public class SaleController {
 
-    private final SaleServiceInputPort service;
+    private final SaleServiceInputPort saleService;
+    private final CreateSaleServiceInputPort createSaleService;
     private final SaleMapper mapper;
 
     @Operation(summary = "Cadastrar uma nova venda")
@@ -47,7 +49,7 @@ public class SaleController {
             @Valid @RequestBody SaleRequest request
     ) throws SaleUnprocessableEntityException{
         Sale sale = mapper.toSale(request);
-        Sale saleSave = service.create(sale);
+        Sale saleSave = createSaleService.createSale(sale);
 
         SaleResponse response = mapper.toSaleResponse(saleSave);
 
@@ -68,7 +70,7 @@ public class SaleController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<SaleResponse> findById(@PathVariable UUID id) throws VehicleNotFoundException, SaleNotFoundException,  SaleUnprocessableEntityException {
-        Sale sale = service.findById(id);
+        Sale sale = saleService.findById(id);
         SaleResponse response = mapper.toSaleResponse(sale);
         return ResponseEntity.ok().body(response);
     }
@@ -86,7 +88,7 @@ public class SaleController {
     })
     @GetMapping("/customer/{cpf}")
     public ResponseEntity<List<SaleResponse>> findByCustomerCpfAdmin(@PathVariable String cpf) throws VehicleNotFoundException, SaleNotFoundException,  SaleUnprocessableEntityException {
-        List<Sale> sales = service.findByCustomerCpfAdmin(cpf);
+        List<Sale> sales = saleService.findByCustomerCpfAdmin(cpf);
 
         List<SaleResponse> response = sales.stream()
                 .map(mapper::toSaleResponse)
@@ -108,7 +110,7 @@ public class SaleController {
     })
     @GetMapping("/customer/purchases")
     public ResponseEntity<List<SaleResponse>> findByCustomerCpf() throws VehicleNotFoundException, SaleNotFoundException,  SaleUnprocessableEntityException {
-        List<Sale> sales = service.findByCustomerCpfOrderByDateTimeSaleDesc();
+        List<Sale> sales = saleService.findByCustomerCpfOrderByDateTimeSaleDesc();
 
         List<SaleResponse> response = sales.stream()
                 .map(mapper::toSaleResponse)
