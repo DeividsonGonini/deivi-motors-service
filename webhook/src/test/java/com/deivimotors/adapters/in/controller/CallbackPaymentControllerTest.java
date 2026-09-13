@@ -4,7 +4,7 @@ import com.deivimotors.adapters.in.controller.mapper.CallbackPaymentMapper;
 import com.deivimotors.adapters.in.controller.request.CallbackPaymentRequest;
 import com.deivimotors.domain.CallbackPayment;
 import com.deivimotors.domain.PaymentStatusEnum;
-import com.deivimotors.domain.ports.in.CallbackPaymentInputPort;
+import com.deivimotors.application.ports.in.CallbackPaymentInputPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

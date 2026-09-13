@@ -4,7 +4,7 @@ import com.deivimotors.adapters.out.client.CheckoutSaleClient;
 import com.deivimotors.adapters.out.client.mapper.CheckoutSaleMapper;
 import com.deivimotors.adapters.out.client.request.CheckoutSaleRequest;
 import com.deivimotors.domain.CallbackPayment;
-import com.deivimotors.domain.ports.out.CallbackPaymentOutputPort;
+import com.deivimotors.application.ports.out.CallbackPaymentOutputPort;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

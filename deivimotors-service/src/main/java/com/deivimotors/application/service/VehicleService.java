@@ -24,7 +24,7 @@ public class VehicleService implements VehicleServiceInputPort {
 
     @Override
     public UUID create(Vehicle vehicle) {
-
+        logger.info("Create vehicle model: {}", vehicle.getModel());
         UUID id = UUID.randomUUID();
         vehicle.setId(id);
         vehicle.setStatus(VehicleStatusEnum.A_VENDA);
@@ -35,6 +35,8 @@ public class VehicleService implements VehicleServiceInputPort {
 
     @Override
     public Vehicle getById(UUID vehicleId) throws VehicleNotFoundException {
+        logger.info("Get vehicle for id: {}", vehicleId);
+
         Optional<Vehicle> vehicle = Optional.ofNullable(repository.findById(vehicleId)
                 .orElseThrow(() -> new VehicleNotFoundException("Vehicle not found for id: " + vehicleId)));
 
@@ -43,6 +45,8 @@ public class VehicleService implements VehicleServiceInputPort {
 
     @Override
     public Vehicle update(UUID vehicleId, Vehicle vehicle) throws VehicleNotFoundException {
+        logger.info("Update status vehicle, id vehicle: {} - new model: {}", vehicleId, vehicle.getModel());
+
         Vehicle currentVehicle = findById(vehicleId);
 
         if (currentVehicle.getStatus().equals(VehicleStatusEnum.VENDIDO)) {
@@ -58,6 +62,7 @@ public class VehicleService implements VehicleServiceInputPort {
 
     @Override
     public List<Vehicle> findBySituacaoOrderByPrecoAsc(VehicleStatusEnum status) {
+        logger.info("Find vehicles for status: {}", status);
         return repository.findByStatusOrderByPriceAsc(status);
     }
 
@@ -70,6 +75,7 @@ public class VehicleService implements VehicleServiceInputPort {
     }
 
     private Vehicle findById(UUID vehicleId) throws VehicleNotFoundException {
+        logger.info("Find vehicle for id: {}", vehicleId);
         Optional<Vehicle> vehicle = Optional.ofNullable(repository.findById(vehicleId)
                 .orElseThrow(() -> new VehicleNotFoundException("Vehicle not found for id: : " + vehicleId)));
         return vehicle.get();
@@ -77,6 +83,7 @@ public class VehicleService implements VehicleServiceInputPort {
 
     @Override
     public void updateStatus(UUID vehicleId, VehicleStatusEnum status) {
+        logger.info("Update status vehicle, id vehicle: {} - new status: {}", vehicleId, status);
         var vehicle = findById(vehicleId);
 
         if (vehicle.getStatus().equals(VehicleStatusEnum.VENDIDO)) {
