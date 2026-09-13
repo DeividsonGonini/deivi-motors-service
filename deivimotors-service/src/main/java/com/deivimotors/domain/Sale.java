@@ -3,6 +3,7 @@ package com.deivimotors.domain;
 import com.deivimotors.application.exceptions.PaymentUnprocessableEntityException;
 import com.deivimotors.domain.enums.SaleStatusEnum;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -10,19 +11,25 @@ public class Sale {
     private UUID id;
     private Vehicle vehicle;
     private SaleStatusEnum status;
-    private String client;
+    private String customerCpf;
     private LocalDateTime dateTimeSale;
+    private BigDecimal totalPrice;
 
     public Sale(UUID id,
                 Vehicle vehicle,
                 SaleStatusEnum status,
-                String client,
-                LocalDateTime dateTimeSale) {
+                String customerCpf,
+                LocalDateTime dateTimeSale,
+                BigDecimal totalPrice) {
         this.id = id;
         this.vehicle = vehicle;
         this.status = status;
-        this.client = client;
+        this.customerCpf = customerCpf;
         this.dateTimeSale = dateTimeSale;
+        this.totalPrice = totalPrice;
+    }
+
+    public Sale() {
     }
 
     public Sale completed() throws PaymentUnprocessableEntityException {
@@ -35,8 +42,8 @@ public class Sale {
     }
 
     public Sale canceled() throws PaymentUnprocessableEntityException {
-       this.status = SaleStatusEnum.CANCELADO;
-       return this;
+        this.status = SaleStatusEnum.CANCELADO;
+        return this;
     }
 
     public UUID getId() {
@@ -63,12 +70,12 @@ public class Sale {
         this.status = status;
     }
 
-    public String getClient() {
-        return client;
+    public String getCustomerCpf() {
+        return customerCpf;
     }
 
-    public void setClient(String client) {
-        this.client = client;
+    public void setCustomerCpf(String customerCpf) {
+        this.customerCpf = customerCpf;
     }
 
     public LocalDateTime getDateTimeSale() {
@@ -77,5 +84,13 @@ public class Sale {
 
     public void setDateTimeSale(LocalDateTime dateTimeSale) {
         this.dateTimeSale = dateTimeSale;
+    }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
     }
 }

@@ -48,6 +48,9 @@ public class Vehicle {
         );
     }
 
+    public Vehicle() {
+    }
+
     public Vehicle sold() throws VehicleUnprocessableEntityException {
         if (this.status != VehicleStatusEnum.A_VENDA) {
             throw new VehicleUnprocessableEntityException("The current status: " + this.status.getStatus() +

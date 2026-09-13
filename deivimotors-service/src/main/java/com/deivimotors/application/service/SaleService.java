@@ -5,6 +5,8 @@ import com.deivimotors.application.exceptions.SaleUnprocessableEntityException;
 import com.deivimotors.application.ports.in.SaleServiceInputPort;
 import com.deivimotors.application.ports.in.VehicleServiceInputPort;
 import com.deivimotors.application.ports.out.SaleRepositoryOutputPort;
+import com.deivimotors.config.security.AuthenticatedUser;
+import com.deivimotors.config.security.AuthenticatedUserProvider;
 import com.deivimotors.domain.Sale;
 import com.deivimotors.domain.Vehicle;
 import com.deivimotors.domain.enums.SaleStatusEnum;
@@ -12,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,26 +25,43 @@ public class SaleService implements SaleServiceInputPort {
 
     private final SaleRepositoryOutputPort repository;
     private final VehicleServiceInputPort vehicleService;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
+
 
     public SaleService(SaleRepositoryOutputPort repository,
-                       VehicleServiceInputPort vehicleService) {
+                       VehicleServiceInputPort vehicleService,
+                       AuthenticatedUserProvider authenticatedUserProvider) {
         this.repository = repository;
         this.vehicleService = vehicleService;
+        this.authenticatedUserProvider = authenticatedUserProvider;
     }
 
     @Override
-    public Sale create(Sale sale) {
+    public Sale create(Sale sale) throws SaleUnprocessableEntityException {
         UUID id = UUID.randomUUID();
         sale.setId(id);
         sale.setStatus(SaleStatusEnum.EM_ANDAMENTO);
         sale.setDateTimeSale(LocalDateTime.now());
 
-        Vehicle vehicle = vehicleService.getById(sale.getVehicle().getId());
+        /**
+         * Caso tenha usuário autenticado, seta o CPF do cliente recuperado do token
+         * Caso não, utiliza o cliente passado na requisição
+         */
+        authenticatedUserProvider.getCurrentUser()
+                .ifPresent(user -> sale.setCustomerCpf(user.cpf()));
 
+        if (sale.getCustomerCpf() == null || sale.getCustomerCpf().isBlank()) {
+            throw new SaleUnprocessableEntityException(
+                    "Customer CPF was not provided"
+            );
+        }
+
+        Vehicle vehicle = vehicleService.getById(sale.getVehicle().getId());
         vehicleService.validationVehicleForSale(vehicle.getStatus());
+        sale.setTotalPrice(vehicle.getPrice());
 
         UUID idSale = repository.save(sale);
-        logger.info("Sale Created for id: {} and client: {}", idSale, sale.getClient());
+        logger.info("Sale Created for id: {} and customerCpf: {}", idSale, sale.getCustomerCpf());
 
         sale.setVehicle(vehicle);
 
@@ -49,11 +69,22 @@ public class SaleService implements SaleServiceInputPort {
     }
 
     @Override
-    public Sale findById(UUID saleId) {
+    public Sale findById(UUID saleId) throws SaleNotFoundException, SaleUnprocessableEntityException {
+        logger.info("Find Sale by id: {} ", saleId);
+
         Optional<Sale> optionalSale = Optional.ofNullable(repository.findById(saleId)
                 .orElseThrow(() -> new SaleNotFoundException("Sale not found for id: : " + saleId)));
 
         Sale sale = optionalSale.get();
+
+        authenticatedUserProvider.getCurrentUser()
+                .ifPresent(user -> {
+                    if (!user.cpf().equals(sale.getCustomerCpf())) {
+                        throw new SaleUnprocessableEntityException(
+                                "The sale does not belong to the requested customer"
+                        );
+                    }
+                });
 
         Vehicle vehicle = vehicleService.getById(sale.getVehicle().getId());
 
@@ -64,6 +95,9 @@ public class SaleService implements SaleServiceInputPort {
 
     @Override
     public void updateStatus(UUID saleId, SaleStatusEnum status) throws SaleUnprocessableEntityException {
+
+        logger.info("Update status of SaleId: {} - new Status: {}", saleId, status);
+
         var sale = findById(saleId);
 
         if (sale.getStatus().equals(SaleStatusEnum.CONCLUIDO) ||
@@ -90,8 +124,49 @@ public class SaleService implements SaleServiceInputPort {
     }
 
     @Override
-    public Sale update(UUID saleId, Sale sale) {
-        return null;
+    public List<Sale> findByCustomerCpfOrderByDateTimeSaleDesc() {
+
+        AuthenticatedUser user = authenticatedUserProvider
+                .getCurrentUser()
+                .orElseThrow(() ->
+                        new SaleUnprocessableEntityException(
+                                "Authenticated customer not found"
+                        )
+                );
+
+        logger.info("Find Sale by Authenticated customerCpf: {} ", user.cpf());
+
+        List<Sale> sales = repository.findByCustomerCpfOrderByDateTimeSaleDesc(user.cpf());
+
+        sales.forEach(sale -> {
+            Vehicle vehicle = vehicleService.getById(
+                    sale.getVehicle().getId()
+            );
+            sale.setVehicle(vehicle);
+        });
+        return sales;
     }
+
+    @Override
+    public List<Sale> findByCustomerCpfAdmin(String cpf) {
+
+        logger.info("Find Sale by customerCpf: {} ", cpf);
+
+        List<Sale> sales = repository.findByCustomerCpfOrderByDateTimeSaleDesc(cpf);
+
+        sales.forEach(sale -> {
+            Vehicle vehicle = vehicleService.getById(
+                    sale.getVehicle().getId()
+            );
+            sale.setVehicle(vehicle);
+        });
+        return sales;
+    }
+
+
+//    @Override
+//    public Sale update(UUID saleId, Sale sale) {
+//        return null;
+//    }
 
 }

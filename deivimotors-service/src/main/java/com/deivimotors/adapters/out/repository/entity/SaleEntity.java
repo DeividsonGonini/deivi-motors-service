@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -26,6 +27,7 @@ public class SaleEntity implements Serializable {
     //TODO ajustar pra salvar o ID Veiculo
     private VehicleEntity vehicle;
     private SaleStatusEnum status;
-    private String client;
+    private String customerCpf;
     private LocalDateTime dateTimeSale;
+    private BigDecimal totalPrice;
 }
