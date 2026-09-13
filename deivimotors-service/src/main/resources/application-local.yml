@@ -6,26 +6,18 @@ server:
 spring:
   application:
     name: Deivi Motors
-
-#Exige um JWT
-app:
-  security:
-    jwt-enabled: false
-
   output:
     ansi:
       enabled: always
-
   main:
     allow-bean-definition-overriding: true
-
   data:
     mongodb:
       uri: ${MONGODB_URL:mongodb://admin:admin@localhost:27017/deivimotorsDB?authSource=admin}
-
   sql:
     init:
       mode: always
+
 
 management:
   endpoints:
@@ -35,6 +27,11 @@ management:
   endpoint:
     health:
       show-details: always
+
+#Exige um JWT
+app:
+  security:
+    jwt-enabled: false
 
 springdoc:
   api-docs:
